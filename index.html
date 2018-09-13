@@ -229,6 +229,136 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/13/Install-third-party-library-in-Visual-Studio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="James LEE">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JAMES LEE''s BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/13/Install-third-party-library-in-Visual-Studio/" itemprop="url">Install-third-party-library-in-Visual-Studio</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-13T18:32:07-04:00">
+                2018-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>当前真是一个开源的时代，有很多很棒的第三方库都实现了开源,比如计算机视觉领域有名的就有OpenCV、VTK、OptiX、caffe、caffe2。这些库因为都跟计算机图形、图像数据处理相关，计算耗时，需要考虑代码运行效率，源代码多采用C、C++编写。而且考虑到跨平台使用，源代码需采用make的方式编译和安装。就是说make可以检测当前编译安装平台类型，自动将源代码build成适宜的库文件，并安装到相应的目录。例如在Windows平台，就编译连接生成lib、dll，加上必要的头文件，默认安装到C:\Program Files。在LINUX平台，就编译链接生成SO文件，默认安装到/user/lib。有了这些安装后的库文件，开发者才可以调用里面的类、函数做符合特定业务逻辑的事情。一般来说，这些库的源码在设计和实现时，都考虑到使用者可能擅长不同的开发语言，因此在源码中不仅实现了库中必须的类和功能，还提供了其他开发语言接口。比如caffe,虽然功能代码是用C和C++写的，但提供了matlab和python接口，开发者可以使用这两种语言调用其功能。当然C++和C语言也是可以的。本文主要讲述这种第三方库如何在windows平台下，使用VC++建立project,调用库中的功能。</p>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>一般来说，这种用户数量大的第三方库都做得非常规范，既可以选择二进制安装，也可以选择源码安装。所谓二进制安装,就是给你提供了exe形式的installer,跟安装普通的软件没什么区别。不过一般建议用源码安装，因为遇到稍微复杂点的error，你可以跟踪进源码内部，看看到底是哪里出了问题。另外源码安装可以根据你的开发平台，生成完全匹配的LIB和DLL，我想更稳健吧。</p>
+<h2 id="cmake"><a href="#cmake" class="headerlink" title="cmake"></a>cmake</h2><p>cmake就是根据你的源码，以及附带的CMakeLists.txt,进行configuration和generation。configuration给你一些生成solution的选择，比如要不要生成examples,要不要生成shared library,要不要指定安装目录路径等，你因该根据你的需求选择。configuration OK后就进行generation。如果都没问题就在你选择的binary library的路径下生成了一个VS的sln。</p>
+<h2 id="compile"><a href="#compile" class="headerlink" title="compile"></a>compile</h2><p>打开这个sln，一般都发现这是一个庞大的solution,包含几十个project，其中一般都有ALL_BUILD,ZERO_CHECK,INSTALL这三个project，除此外才是核心的功能代码。没甚说的，build啦。记住，一般选择debug和release两个版本。此外，你还需注意，你到底是要生成win32还是x64平台下的库文件。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>选择其中的INSTALL工程，右键project only-&gt;build only INSTALL,VS自动把开发需要的include,lib,bin这些必要的文件拷贝到cmake阶段configuration设置的安装路径。</p>
+<h2 id="开发配置"><a href="#开发配置" class="headerlink" title="开发配置"></a>开发配置</h2><p>新建一个VS工程，要调用刚安装的第三方库，还需要做必要的配置。一般，在选择project名字，右键属性，设置以下四步，包括：</p>
+<h3 id="设置头文件路径"><a href="#设置头文件路径" class="headerlink" title="设置头文件路径"></a>设置头文件路径</h3><p>要调用第三库功能，必然需要包含其库中头文件。工程中一般直接include头文件文件名，不使用全路径。因此，为了告诉VS编译时，到哪里去找这个文件，需要设置projec属性中的VC++ Directories-&gt;Include Directories,包含第三方库安装路径中的include文件夹。</p>
+<h3 id="设置库文件路径"><a href="#设置库文件路径" class="headerlink" title="设置库文件路径"></a>设置库文件路径</h3><p>要调用第三库功能，必然需要链接调用其库中库文件。工程属性中第三库库文件一般通过导入additional dependices,添加要导入的库文件。同上，添加库文件一般只给出短文件名，为了告诉VS链接时到哪里去找库文件，需要设置projec属性中的VC++ Directories-&gt;Library Directories,设置第三方库安装路径中的Lib文件夹。</p>
+<h3 id="设置要导入的库"><a href="#设置要导入的库" class="headerlink" title="设置要导入的库"></a>设置要导入的库</h3><p>上述第二步只是告诉了VS到哪里去找库，找哪些库，也就是你要导入哪些库，需要根据你程序功能设置。linker-input-&gt;additional dependices。添加你要导入的库，你如果不知道如何选择，直接导入第三库中所有的LIB文件。<br>TIPS：命令行使用DIR　＊.lib /B 列出所有的库文件，拷贝添加。</p>
+<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>你的工程可能使用的是共享库，因此真正的库执行文件在DLL，也就是第三方库安装路径下的BIN中的DLL文件。你可以将所有DLL拷贝到你工程的EXE程序所在的文件夹（比如DEBUG，RELEASE)，但设置环境变量是为了让你生成的所有的应用程序都可以找到DLL所在的文件夹。</p>
+<p>至此，第三方库，编译、安装和开发设置完毕。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/13/Install-pytorch-and-detectron-on-ubuntu-16-04/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -702,7 +832,7 @@ demo
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
