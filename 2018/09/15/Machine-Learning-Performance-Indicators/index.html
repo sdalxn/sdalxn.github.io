@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="title: Machine Learning Performance Indicatorsdate: 2018-09-15 14:19:52tags: 机器学习中最基本的问题就是二元分类问题和回归问题。你如果设计了一个分类模型或者回归模型，如何刻画你这个模型的好坏呢？就要用到这些性能指标了。 分类最基本的分类是二元分类，就是说数据输入你的模型，你告诉人家这是某种object还是不是。分类，必然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAMES LEE&#39;&#39;s BLOG">
+<meta property="og:url" content="http://yoursite.com/2018/09/15/Machine-Learning-Performance-Indicators/index.html">
+<meta property="og:site_name" content="JAMES LEE&#39;&#39;s BLOG">
+<meta property="og:description" content="title: Machine Learning Performance Indicatorsdate: 2018-09-15 14:19:52tags: 机器学习中最基本的问题就是二元分类问题和回归问题。你如果设计了一个分类模型或者回归模型，如何刻画你这个模型的好坏呢？就要用到这些性能指标了。 分类最基本的分类是二元分类，就是说数据输入你的模型，你告诉人家这是某种object还是不是。分类，必然">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.fullstackdevel.com/wp-content/uploads/2015/09/38381443447279.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/6/6b/Roccurves.png">
+<meta property="og:image" content="http://yoursite.com/images/ROC-Probability-Model.jpg">
+<meta property="og:image" content="http://yoursite.com/images/image.jpg">
+<meta property="og:image" content="http://alexkong.net/images/score-ranking.png">
+<meta property="og:image" content="http://alexkong.net/images/roc-example.png">
+<meta property="og:image" content="http://alexkong.net/images/roc-and-precall.png">
+<meta property="og:image" content="http://alexkong.net/images/roc-and-precall.png">
+<meta property="og:updated_time" content="2018-09-15T18:20:54.283Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAMES LEE&#39;&#39;s BLOG">
+<meta name="twitter:description" content="title: Machine Learning Performance Indicatorsdate: 2018-09-15 14:19:52tags: 机器学习中最基本的问题就是二元分类问题和回归问题。你如果设计了一个分类模型或者回归模型，如何刻画你这个模型的好坏呢？就要用到这些性能指标了。 分类最基本的分类是二元分类，就是说数据输入你的模型，你告诉人家这是某种object还是不是。分类，必然">
+<meta name="twitter:image" content="http://www.fullstackdevel.com/wp-content/uploads/2015/09/38381443447279.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/15/Machine-Learning-Performance-Indicators/"/>
+
+
+
+
+
+  <title> | JAMES LEE''s BLOG</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">JAMES LEE''s BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/15/Machine-Learning-Performance-Indicators/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="James LEE">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JAMES LEE''s BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-15T14:19:52-04:00">
+                2018-09-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<p>title: Machine Learning Performance Indicators<br>date: 2018-09-15 14:19:52<br>tags:</p>
+<p>机器学习中最基本的问题就是二元分类问题和回归问题。你如果设计了一个分类模型或者回归模型，如何刻画你这个模型的好坏呢？就要用到这些性能指标了。</p>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>最基本的分类是二元分类，就是说数据输入你的模型，你告诉人家这是某种object还是不是。分类，必然存在正确的情形，也存在错误的情形。对于二元分类，就是说，正确的情形包括正类预测为正类，负类预测为负类；错误的情形当然包括将正类预测为负类，将负类预测为正类。学术界用混淆矩阵刻画这个结果：</p>
+<p><strong>混淆矩阵</strong><br>True Positive（真正, <strong>TP</strong>）：将正类预测为正类数.<br>True Negative（真负 , <strong>TN</strong>）：将负类预测为负类数.<br>False Positive（假正, <strong>FP</strong>）：将负类预测为正类数  误报 (Type I error).<br>False Negative（假负 , <strong>FN</strong>）：将正类预测为负类数  漏报 (Type II error).<br>为什么称之为矩阵呢？因为经常这样记录这四个数：<br>|  &nbsp; | positive | negative |<br>| :—–: | :——: | :——: |<br>| True    | True Positive(TP)   |  True Negative(TN)    |<br>| False   | False Positive(FP） |  False Negative(FN)  |<br>在这个混淆矩阵基础上，产生了几个性能指标：</p>
+<h3 id="准确率-Accuracy"><a href="#准确率-Accuracy" class="headerlink" title="准确率(Accuracy)"></a>准确率(Accuracy)</h3><p>$$ACC=\frac {TP+TN}{TP+TN+FP+FN}$$</p>
+<blockquote>
+<p>在正负样本不平衡的情况下，准确率这个评价指标有很大的缺陷。比如在互联网广告里面，点击的数量是很少的，一般只有千分之几，如果用acc，即使全部预测成负类（不点击）acc 也有 99% 以上，没有意义。</p>
+</blockquote>
+<h3 id="精确率-Precision"><a href="#精确率-Precision" class="headerlink" title="精确率(Precision)"></a>精确率(Precision)</h3><p>$$P={TP \over TP+FP}$$</p>
+<h3 id="召回率-Recall"><a href="#召回率-Recall" class="headerlink" title="召回率(Recall)"></a>召回率(Recall)</h3><p>有的文献称之为sensitivity，true positive rate<br>$$R=\frac {TP}{TP+FN}$$</p>
+<blockquote>
+<p>在信息检索领域，精确率和召回率又被分别称为查准率和查全率。<br>$$查准率=\frac{检索出的相关信息量}{检索出的信息总量},      查全率=\frac{检索出的相关信息量}{系统中的相关信息总量}$$</p>
+</blockquote>
+<h3 id="F1值-F1-Score"><a href="#F1值-F1-Score" class="headerlink" title="F1值(F1 Score)"></a>F<sub>1</sub>值(F<sub>1</sub> Score)</h3><p>精确率和召回率的调和均值。所谓调和均值，就是倒数平均数，是总体各统计变量倒数的算术平均数的倒数。看公式：<br>$${2 \over F_1}={1 \over P} + {1 \over R} $$<br>可以很容易推出：<br>$$F_1={2PR \over {P+R}}={2TP \over {2TP+FP+FN}}$$</p>
+<blockquote>
+<p>精确率和准确率都高的情况下，F<sub>1</sub> 值也会高。</p>
+</blockquote>
+<h3 id="PR曲线"><a href="#PR曲线" class="headerlink" title="PR曲线"></a>PR曲线</h3><p>PR曲线指Precision-Recall曲线，中文为查准率-查全率曲线。</p>
+<p>对于一个分类器（也就是一种分类算法啦），可以给出每个样本属于正类的概率。你可以选择一个阈值，将概率大于这个阈值的归为正类，其他归为负类。因此，一个阈值对应一个划分，也就对应一个（Recall，Precision）pair。选择不同的阈值，得到很多的pairs。在Recall-Precision坐标系，一个pair对一个点，把这些点连接起来就构成PR曲线。<br><img src="http://www.fullstackdevel.com/wp-content/uploads/2015/09/38381443447279.png" alt="Precision-Recall-Curve"><br>通常随着分类阈值从大到小变化（大于阈值认为属于正类），查准率减小，查全率增加。比较两个分类器好坏时，显然是查得又准又全的比较好，也就是的<strong>PR曲线越往坐标（1，1）的位置靠近越好</strong>。</p>
+<h3 id="ROC-曲线"><a href="#ROC-曲线" class="headerlink" title="ROC 曲线"></a>ROC 曲线</h3><p>先讨论几个指标：TPR，FPR，TNR<br>(1) TPR(True Postive Rate)<br>真正类率,代表分类器<strong>预测的正类中实际正实例</strong>占所有正实例的比例,也就是前文中的Recall。有的文献称为敏感度（Sensitivity）。<br>$$TPR=\frac {TP}{TP+FN}$$<br>(2) TNR(True Negative Rate)<br>真负类率，代表分类器<strong>预测的负类中实际负实例</strong>占所有负实例的比例，又称为特异度(Specificity)<br>$$TNR=\frac {TN}{FP+TN}$$<br>(3) FPR(False Postive Rate)<br>假正类率，代表分类器<strong>预测的正类中实际负实例</strong>占所有负实例的比例。1-Specificity<br>$$FPR={FP \over FP+TN}$$</p>
+<blockquote>
+<p>显然，TNR+FPR=1。</p>
+</blockquote>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Roccurves.png" alt="ROC-curves"><br>正如我们在这个ROC曲线的示例图中看到的那样，ROC曲线的横坐标为false positive rate（FPR），纵坐标为true positive rate（TPR）。</p>
+<p>我们讨论ROC曲线图中的四个点和一条线。</p>
+<blockquote>
+<ul>
+<li>第一个点，(0,1)，即FPR=0, TPR=1，这意味着FN（false negative）=0，并且FP（false positive）=0。Wow，这是一个完美的分类器，它将所有的样本都正确分类。</li>
+<li>第二个点，(1,0)，即FPR=1，TPR=0，类似地分析可以发现这是一个最糟糕的分类器，因为它成功避开了所有的正确答案。</li>
+<li>第三个点，(0,0)，即FPR=TPR=0，即FP（false positive）=TP（true positive）=0，可以发现该分类器预测所有的样本都为负样本（negative）。</li>
+<li>第四个点（1,1），分类器实际上预测所有的样本都为正样本。</li>
+<li>ROC曲线图中的虚线y=x上的点。这条对角线上的点其实表示的是一个采用随机猜测策略的分类器的结果，例如(0.5,0.5)，表示该分类器随机对于一半的样本猜测其为正样本，另外一半的样本为负样本。</li>
+</ul>
+</blockquote>
+<p><strong>经过以上的分析，我们可以断言，ROC曲线越接近左上角，该分类器的性能越好；PR曲线越接近右上角，该分类器性能越好。</strong></p>
+<p><strong>那么是怎么得到这个曲线的呢？</strong><br>对于一个特定的分类器和测试数据集，显然只能得到一个分类结果，即一组FPR和TPR结果，而要得到一个曲线，我们实际上需要一系列FPR和TPR的值，这又是如何得到的呢？其实这和得到PR曲线一个原理。</p>
+<p>有一个视频讲这个讲得特别好。推荐一下，<a href="https://www.youtube.com/watch?v=OAl6eAyP-yo" target="_blank" rel="noopener">ROC Curves and Area Under the Curve(AUC) </a>，如果上不了YOUTUBE，可以去看看视频末尾提到的这个网站<a href="http://www.navan.name/roc/" target="_blank" rel="noopener">ROC-Visualization</a>。</p>
+<p>大概原理是这样的。假如你已经有了一个模型，你就可以根据这个模型得到了所有样本的概率输出（属于正样本的概率）。<img src="/images/ROC-Probability-Model.jpg" alt="ROC-Probability-Model"><br>现在的问题是如何改变“discriminati<img src="/images/image.jpg" alt="">on threashold”？我们根据每个测试样本属于正样本的概率值从大到小排序。下图是一个示例，图中共有20个测试样本，“Class”一栏表示每个测试样本真正的标签（p表示正样本，n表示负样本），“Score”表示每个测试样本属于正样本的概率。</p>
+<p><img src="http://alexkong.net/images/score-ranking.png" alt=""><br>接下来，我们从高到低，依次将“Score”值作为阈值threshold，当测试样本属于正样本的概率大于或等于这个threshold时，我们认为它为正样本，否则为负样本。举例来说，对于图中的第4个样本，其“Score”值为0.6，那么样本1，2，3，4都被认为是正样本，因为它们的“Score”值都大于等于0.6，而其他样本则都认为是负样本。每次选取一个不同的threshold，我们就可以得到一组FPR和TPR，即ROC曲线上的一点。这样一来，我们一共得到了20组FPR和TPR的值，将它们画在ROC曲线的结果如下图：</p>
+<p><img src="http://alexkong.net/images/roc-example.png" alt=""><br>当我们将threshold设置为1和0时，分别可以得到ROC曲线上的(0,0)和(1,1)两个点。将这些(FPR,TPR)对连接起来，就得到了ROC曲线。当threshold取值越多，ROC曲线越平滑。</p>
+<p>其实，我们并不一定要得到每个测试样本是正样本的概率值，只要得到这个分类器对该测试样本的“评分值”即可（评分值并不一定在(0,1)区间）。评分越高，表示分类器越肯定地认为这个测试样本是正样本，而且同时使用各个评分值作为threshold。我认为将评分值转化为概率更易于理解一些。</p>
+<p>为什么使用ROC曲线<br>既然已经这么多评价标准，为什么还要使用ROC和AUC呢？因为ROC曲线有个很好的特性：当测试集中的正负样本的分布变化的时候，ROC曲线能够保持不变。在实际的数据集中经常会出现类不平衡（class imbalance）现象，即负样本比正样本多很多（或者相反），而且测试数据中的正负样本的分布也可能随着时间变化。下图是ROC曲线和Precision-Recall曲线5的对比：<br><img src="http://alexkong.net/images/roc-and-precall.png" alt=""></p>
+<h3 id="AUC（Area-Under-Curve）"><a href="#AUC（Area-Under-Curve）" class="headerlink" title="AUC（Area Under Curve）"></a>AUC（Area Under Curve）</h3><p>AUC被定义为ROC曲线下的面积，显然这个面积的数值不会大于1。又由于ROC曲线一般都处于y=x这条直线的上方，所以AUC的取值范围在0.5和1之间。<br>根据(Fawcett, 2006)，AUC的值的含义[^FAWCETT2006]是：</p>
+<blockquote>
+<p>The AUC value is equivalent to the probability that a randomly chosen positive example is ranked higher than a randomly chosen negative example.</p>
+</blockquote>
+<p>什么意思呢？随机挑选一个正样本和一个负样本，根据当前的分类算法，计算得到两个样本的Score值。正样本得分比负样本得分高的概率就是AUC值。<br>简单说：AUC值越大的分类器，正确率越高[^AUC&amp;ROC]。<br>分析一下：<br>(1) AUC=1，完美分类器，采用这个预测模型时，不管设定什么阈值都能得出完美预测。绝大多数预测的场合，不存在完美分类器。<br>(2) 0.5 &lt; AUC &lt; 1，优于随机猜测。这个分类器（模型）妥善设定阈值的话，能有预测价值。<br>(3) AUC=0.5，跟随机猜测一样（例：丢铜板），模型没有预测价值。<br>(4) AUC&lt;0.5，比随机猜测还差；但只要总是反预测而行，就优于随机猜测，因此不存在 AUC&lt;0.5 的情况。</p>
+<p>使用AUC值作为评价标准是因为很多时候ROC曲线并不能清晰的说明哪个分类器的效果更好，而作为一个数值，对应AUC更大的分类器效果更好。</p>
+<p><img src="http://alexkong.net/images/roc-and-precall.png" alt=""></p>
+<p>在了解了ROC曲线的构造过程后，编写代码实现并不是一件困难的事情。相比自己编写代码，有时候阅读其他人的代码收获更多，当然过程也更痛苦些。在此推荐scikit-learn中关于计算AUC的代码。</p>
+<p>在上图中，(a)和(c)为ROC曲线，(b)和(d)为Precision-Recall曲线。(a)和(b)展示的是分类其在原始测试集（正负样本分布平衡）的结果，(c)和(d)是将测试集中负样本的数量增加到原来的10倍后，分类器的结果。可以明显的看出，ROC曲线基本保持原貌，而Precision-Recall曲线则变化较大。</p>
+<p>说明，文中除了第一张图来自Wikipedia外，其他的图都来自论文(Fawcett, 2006)6截图.</p>
+<p>引用及其他链接：</p>
+<p>维基百科中对ROC的介绍: <a href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic" target="_blank" rel="noopener">http://en.wikipedia.org/wiki/Receiver_operating_characteristic</a><br>ROC曲线及AUC评价指标 by 冒泡的崔：<a href="http://bubblexc.com/y2011/148/" target="_blank" rel="noopener">http://bubblexc.com/y2011/148/</a><br>我避免将precision，recall等评价指标翻译成中文，因为它们可能对应多个中文解释，极易产生混淆。 ↩</p>
+<p>图片来源：<a href="http://en.wikipedia.org/wiki/File:Roccurves.png" target="_blank" rel="noopener">http://en.wikipedia.org/wiki/File:Roccurves.png</a> ↩</p>
+<p>这种映射不一定都是可靠的，即你不一定真的得到了某个样本是正样本的概率。 ↩</p>
+<p>注意这里使用了“Score”，而不是概率，我们暂且可以认为“Score”值就是是正样本的概率。 ↩</p>
+<p>Davis, J., &amp; Goadrich, M. (2006, June). The relationship between Precision-Recall and ROC curves. In Proceedings of the 23rd international conference on Machine learning (pp. 233-240). ACM. ↩</p>
+<p>[^FAWCETT2006]:Fawcett, T. (2006). An introduction to ROC analysis. Pattern recognition letters, 27(8), 861-874</p>
+<p>[^AUC&amp;ROC]: <a href="https://beader.me/2013/12/15/auc-roc/" target="_blank" rel="noopener">AUC与ROC - 衡量分类器的好坏</a>。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/13/Install-third-party-library-in-Visual-Studio/" rel="next" title="Install-third-party-library-in-Visual-Studio">
+                <i class="fa fa-chevron-left"></i> Install-third-party-library-in-Visual-Studio
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">James LEE</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#分类"><span class="nav-number">1.</span> <span class="nav-text">分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准确率-Accuracy"><span class="nav-number">1.1.</span> <span class="nav-text">准确率(Accuracy)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#精确率-Precision"><span class="nav-number">1.2.</span> <span class="nav-text">精确率(Precision)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#召回率-Recall"><span class="nav-number">1.3.</span> <span class="nav-text">召回率(Recall)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#F1值-F1-Score"><span class="nav-number">1.4.</span> <span class="nav-text">F1值(F1 Score)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PR曲线"><span class="nav-number">1.5.</span> <span class="nav-text">PR曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROC-曲线"><span class="nav-number">1.6.</span> <span class="nav-text">ROC 曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AUC（Area-Under-Curve）"><span class="nav-number">1.7.</span> <span class="nav-text">AUC（Area Under Curve）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">James LEE</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
