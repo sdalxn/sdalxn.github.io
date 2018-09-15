@@ -336,7 +336,7 @@
 <p><strong>经过以上的分析，我们可以断言，ROC曲线越接近左上角，该分类器的性能越好；PR曲线越接近右上角，该分类器性能越好。</strong></p>
 <p><strong>那么是怎么得到这个曲线的呢？</strong><br>对于一个特定的分类器和测试数据集，显然只能得到一个分类结果，即一组FPR和TPR结果，而要得到一个曲线，我们实际上需要一系列FPR和TPR的值，这又是如何得到的呢？其实这和得到PR曲线一个原理。</p>
 <p>有一个视频讲这个讲得特别好。推荐一下，<a href="https://www.youtube.com/watch?v=OAl6eAyP-yo" target="_blank" rel="noopener">ROC Curves and Area Under the Curve(AUC) </a>，如果上不了YOUTUBE，可以去看看视频末尾提到的这个网站<a href="http://www.navan.name/roc/" target="_blank" rel="noopener">ROC-Visualization</a>。</p>
-<p>大概原理是这样的。假如你已经有了一个模型，你就可以根据这个模型得到了所有样本的概率输出（属于正样本的概率）。<img src="/images/ROC-Probablity-Model.png" alt="ROC-Probability-Model"><br>现在的问题是如何改变“discriminati<img src="/images/image.jpg" alt="">on threashold”？我们根据每个测试样本属于正样本的概率值从大到小排序。下图是一个示例，图中共有20个测试样本，“Class”一栏表示每个测试样本真正的标签（p表示正样本，n表示负样本），“Score”表示每个测试样本属于正样本的概率。</p>
+<p>大概原理是这样的。假如你已经有了一个模型，你就可以根据这个模型得到了所有样本的概率输出（属于正样本的概率）。<img src="/images/ROC-Probablity-Model.png" alt="ROC-Probability-Model"><br>现在的问题是如何改变“discrimination threashold”？我们根据每个测试样本属于正样本的概率值从大到小排序。下图是一个示例，图中共有20个测试样本，“Class”一栏表示每个测试样本真正的标签（p表示正样本，n表示负样本），“Score”表示每个测试样本属于正样本的概率。</p>
 <p><img src="http://alexkong.net/images/score-ranking.png" alt=""><br>接下来，我们从高到低，依次将“Score”值作为阈值threshold，当测试样本属于正样本的概率大于或等于这个threshold时，我们认为它为正样本，否则为负样本。举例来说，对于图中的第4个样本，其“Score”值为0.6，那么样本1，2，3，4都被认为是正样本，因为它们的“Score”值都大于等于0.6，而其他样本则都认为是负样本。每次选取一个不同的threshold，我们就可以得到一组FPR和TPR，即ROC曲线上的一点。这样一来，我们一共得到了20组FPR和TPR的值，将它们画在ROC曲线的结果如下图：</p>
 <p><img src="http://alexkong.net/images/roc-example.png" alt=""><br>当我们将threshold设置为1和0时，分别可以得到ROC曲线上的(0,0)和(1,1)两个点。将这些(FPR,TPR)对连接起来，就得到了ROC曲线。当threshold取值越多，ROC曲线越平滑。</p>
 <p>其实，我们并不一定要得到每个测试样本是正样本的概率值，只要得到这个分类器对该测试样本的“评分值”即可（评分值并不一定在(0,1)区间）。评分越高，表示分类器越肯定地认为这个测试样本是正样本，而且同时使用各个评分值作为threshold。我认为将评分值转化为概率更易于理解一些。</p>
