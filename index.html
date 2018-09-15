@@ -248,7 +248,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/15/Machine-Learning-Performance-Indicators/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/09/15/Machine-Learning-Performance-Indicators/" itemprop="url">Machine Learning Performance Indicators</a></h1>
         
 
         <div class="post-meta">
@@ -300,9 +300,7 @@
       
         
           
-            <hr>
-<p>title: Machine Learning Performance Indicators<br>date: 2018-09-15 14:19:52<br>tags:</p>
-<p>机器学习中最基本的问题就是二元分类问题和回归问题。你如果设计了一个分类模型或者回归模型，如何刻画你这个模型的好坏呢？就要用到这些性能指标了。</p>
+            <p>机器学习中最基本的问题就是二元分类问题和回归问题。你如果设计了一个分类模型或者回归模型，如何刻画你这个模型的好坏呢？就要用到这些性能指标了。</p>
 <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>最基本的分类是二元分类，就是说数据输入你的模型，你告诉人家这是某种object还是不是。分类，必然存在正确的情形，也存在错误的情形。对于二元分类，就是说，正确的情形包括正类预测为正类，负类预测为负类；错误的情形当然包括将正类预测为负类，将负类预测为正类。学术界用混淆矩阵刻画这个结果：</p>
 <p><strong>混淆矩阵</strong><br>True Positive（真正, <strong>TP</strong>）：将正类预测为正类数.<br>True Negative（真负 , <strong>TN</strong>）：将负类预测为负类数.<br>False Positive（假正, <strong>FP</strong>）：将负类预测为正类数  误报 (Type I error).<br>False Negative（假负 , <strong>FN</strong>）：将正类预测为负类数  漏报 (Type II error).<br>为什么称之为矩阵呢？因为经常这样记录这四个数：<br>|  &nbsp; | positive | negative |<br>| :—–: | :——: | :——: |<br>| True    | True Positive(TP)   |  True Negative(TN)    |<br>| False   | False Positive(FP） |  False Negative(FN)  |<br>在这个混淆矩阵基础上，产生了几个性能指标：</p>
 <h3 id="准确率-Accuracy"><a href="#准确率-Accuracy" class="headerlink" title="准确率(Accuracy)"></a>准确率(Accuracy)</h3><p>$$ACC=\frac {TP+TN}{TP+TN+FP+FN}$$</p>
